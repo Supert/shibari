@@ -9,7 +9,7 @@ namespace Shibari.Editor
         public override void OnInspectorGUI()
         {
             var prefab = PrefabUtility.GetPrefabObject(target);
-            if (PrefabUtility.GetPrefabParent(target) == null && prefab != null && AssetDatabase.GetAssetPath(prefab) == Model.SETTINGS_PATH)
+            if (PrefabUtility.GetPrefabParent(target) == null && prefab != null && AssetDatabase.GetAssetPath(prefab) == Shibari.Model.SETTINGS_PATH)
             {
                 serializedObject.Update();
 
@@ -33,7 +33,7 @@ namespace Shibari.Editor
             }
             else
             {
-                EditorGUILayout.LabelField($"Please, make sure that you edit Shibari Settings via Shibari/Settings menu or directly at {Model.SETTINGS_PATH}.");
+                EditorGUILayout.LabelField($"Please, make sure that you edit Shibari Settings via Shibari/Settings menu or directly at {Shibari.Model.SETTINGS_PATH}.");
             }
         }
     }

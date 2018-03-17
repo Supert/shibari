@@ -19,7 +19,7 @@ namespace Shibari.Editor
             {
                 var settingsPrefab = new UnityEngine.GameObject();
                 prefab = settingsPrefab.AddComponent<ShibariSettings>();
-                AssetDatabase.CreateAsset(settingsPrefab, Model.SETTINGS_PATH);
+                PrefabUtility.CreatePrefab(Model.SETTINGS_PATH, settingsPrefab);
             }
 
             var editor = UnityEditor.Editor.CreateEditor(prefab);

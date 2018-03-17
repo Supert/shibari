@@ -17,20 +17,8 @@ namespace Shibari.Editor
             var prefab = AssetDatabase.LoadAssetAtPath<ShibariSettings>(Model.SETTINGS_PATH);
 
             if (prefab == null)
-            {
-                var settingsPrefab = new UnityEngine.GameObject();
-                prefab = settingsPrefab.AddComponent<ShibariSettings>();
-                string[] splittedPath = Model.SETTINGS_PATH.Split('/');
-                string builtFolders = splittedPath[0];
-                for (int i = 1; i < splittedPath.Length - 1; i++)
-                {
-                    if (!AssetDatabase.GetSubFolders(builtFolders).Contains(splittedPath[i]))
-                        AssetDatabase.CreateFolder(builtFolders, splittedPath[i]);
-                    builtFolders += "/" + splittedPath[i];
-                }
-
-                PrefabUtility.CreatePrefab(Model.SETTINGS_PATH, settingsPrefab);
-            }
+                Shibari.Model.InitializeSettingsPrefab();
+            prefab = AssetDatabase.LoadAssetAtPath<ShibariSettings>(Model.SETTINGS_PATH);
 
             var editor = UnityEditor.Editor.CreateEditor(prefab);
 

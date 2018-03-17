@@ -10,12 +10,9 @@ namespace Shibari.Editor
     [InitializeOnLoad]
     public class Model : UnityEditor.AssetModificationProcessor
     {
-        public const string SETTINGS_PATH = "Assets/Shibari/Resources/ShibariSettings.prefab";
-        public const string SERIALIZATION_TEMPLATES = "Assets/Shibari/Templates/";
-
         static string[] OnWillSaveAssets(string[] paths)
         {
-            if (paths.Any(p => p == SETTINGS_PATH))
+            if (paths.Any(p => p == Shibari.Model.SETTINGS_PATH))
                 RefreshModel();
             return paths;
         }
@@ -35,8 +32,8 @@ namespace Shibari.Editor
 
             string prefabPath = AssetDatabase.GetAssetPath(prefab);
 
-            if (prefabPath != SETTINGS_PATH)
-                Debug.Log($"Please, locate your shibari settings in \"{SETTINGS_PATH}\"");
+            if (prefabPath != Shibari.Model.SETTINGS_PATH)
+                Debug.Log($"Please, locate your shibari settings in \"{Shibari.Model.SETTINGS_PATH}\"");
 
             RefreshModel();
         }
@@ -55,14 +52,14 @@ namespace Shibari.Editor
         public static void RefreshTemplates()
         {
             var types = Shibari.Model.GetBindableDataTypes().Where(t => BindableData.HasSerializeableValuesInChilds(t));
-            foreach (var path in Directory.GetFiles(SERIALIZATION_TEMPLATES).Where(p => !types.Any(t => p == $"{SERIALIZATION_TEMPLATES}{t.FullName}.json")))
+            foreach (var path in Directory.GetFiles(Shibari.Model.SERIALIZATION_TEMPLATES).Where(p => !types.Any(t => p == $"{Shibari.Model.SERIALIZATION_TEMPLATES}{t.FullName}.json")))
             {
                 FileInfo file = new FileInfo($"{path}");
                 file.Delete();
             }
             foreach (var type in types)
             {
-                StreamWriter stream = File.CreateText($"{SERIALIZATION_TEMPLATES}{type.FullName}.json");
+                StreamWriter stream = File.CreateText($"{Shibari.Model.SERIALIZATION_TEMPLATES}{type.FullName}.json");
                 stream.Flush();
                 stream.Write(Shibari.Model.GenerateSerializationTemplate(type));
                 stream.Close();

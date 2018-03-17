@@ -10,6 +10,9 @@ namespace Shibari
     [InitializeOnLoad]
     public static class Model
     {
+        public const string SETTINGS_PATH = "Assets/Shibari/Resources/ShibariSettings.prefab";
+        public const string SERIALIZATION_TEMPLATES = "Assets/Shibari/Templates/";
+
         public static BindableData RootNode { get; private set; }
         public static Type RootNodeType { get; private set; }
 
@@ -18,9 +21,28 @@ namespace Shibari
             DeserializeRootNodeType();
         }
 
+        public static void InitializeSettingsPrefab()
+        {
+            var settingsPrefab = new GameObject();
+            settingsPrefab.AddComponent<ShibariSettings>();
+            string[] splittedPath = SETTINGS_PATH.Split('/');
+            string builtFolders = splittedPath[0];
+            for (int i = 1; i < splittedPath.Length - 1; i++)
+            {
+                if (!AssetDatabase.GetSubFolders(builtFolders).Contains(splittedPath[i]))
+                    AssetDatabase.CreateFolder(builtFolders, splittedPath[i]);
+                builtFolders += "/" + splittedPath[i];
+            }
+
+            PrefabUtility.CreatePrefab(SETTINGS_PATH, settingsPrefab);
+        }
+
         public static void DeserializeRootNodeType()
         {
             ShibariSettings settings = Resources.Load<ShibariSettings>("ShibariSettings");
+            if (settings == null)
+                InitializeSettingsPrefab();
+            settings = Resources.Load<ShibariSettings>("ShibariSettings");
             RootNodeType = settings.RootNodeType.Type;
             if (RootNodeType == null)
             {
@@ -61,7 +83,7 @@ namespace Shibari
         {
             return GenerateSerializationTemplate(typeof(T));
         }
-        
+
         private static IEnumerable<Type> GetBindableDataTypesInAssembly(Assembly assembly)
         {
             return assembly.GetTypes()

@@ -6,7 +6,7 @@ Unity3d data binding framework with strong typing support.
 2. Add required dependencies to your project:
     1. [ClassTypeReference](https://github.com/rotorz/unity3d-class-type-reference)
     2. [JsonNET](https://www.newtonsoft.com/json)
-3. Create ShibariRootNode.cs with following contents:
+3. Create a new class inherited from Shibari.BindableData:
 ```csharp
 using Shibari;
 
@@ -16,4 +16,4 @@ public class ShibariRootNode : BindableData
     
 }
 ```
-4. Pick ShibariRootNode as a root node in Settings/Shibari menu.
+4. Pick it as a root node in Settings/Shibari menu.

@@ -116,9 +116,9 @@ namespace Shibari
             var parameters = methodInfo.GetParameters();
             if (parameters.Length == 0)
                 return true;
-            if (parameters.Length == 1 && (parameters[0].ParameterType == typeof(UI.BindableView) || parameters[0].ParameterType == typeof(string)))
+            if (parameters.Length == 1 && (parameters[0].ParameterType == typeof(UI.BindableHandlerView) || parameters[0].ParameterType == typeof(string)))
                 return true;
-            if (parameters.Length == 2 && parameters[0].ParameterType == typeof(UI.BindableView) && parameters[1].ParameterType == typeof(string))
+            if (parameters.Length == 2 && parameters[0].ParameterType == typeof(UI.BindableHandlerView) && parameters[1].ParameterType == typeof(string))
                 return true;
             return false;
         }

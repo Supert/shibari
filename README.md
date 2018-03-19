@@ -47,7 +47,7 @@ Static class. Initializes RootNode of type specified in Shibari/Settings menu.
 
 Returns RootNode of your model. Due to technical limitations it returns your root node as an object of base type BindableData. For your convenience, I recommend you to encapsulate it somewhere in your project. For example:
 
-```
+```csharp
 public static YourBindableData RootNode
 {
     get

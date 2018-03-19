@@ -2,7 +2,7 @@
 Unity3d data binding framework with strong typing support.
 
 # Minimal setup
-1. Set Player Settings/Api Compatibility Level to Experimental (.NET 4.6 Equivalent).
+1. Set ``Player Settings/Api Compatibility Level`` to ``Experimental (.NET 4.6 Equivalent)``.
 2. Add required dependencies to your project:
     1. [ClassTypeReference](https://github.com/rotorz/unity3d-class-type-reference)
     2. [JsonNET](https://www.newtonsoft.com/json)
@@ -16,7 +16,7 @@ public class ShibariRootNode : BindableData
     
 }
 ```
-4. Pick it as a root node in Settings/Shibari menu.
+4. Pick it as a root node in ``Settings/Shibari`` menu.
 
 #Examples
 You can find a showcase project for my framework [here](https://github.com/Supert/village-keeper). It shows everything my framework is capable of and is close enough to a project you could make in real world of game development.

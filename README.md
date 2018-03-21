@@ -1,6 +1,10 @@
 # Shibari
 Unity3d data binding framework with strong typing support.
 
+![Editor view](screenshot_editor.png?raw=true "Editor")
+
+![Source code sample](screenshot_source.png?raw=true "Source")
+
 # Minimal setup
 1. Set ``Player Settings/Api Compatibility Level`` to ``Experimental (.NET 4.6 Equivalent)``.
 2. Add required dependencies to your project:

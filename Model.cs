@@ -29,7 +29,7 @@ namespace Shibari
             string builtFolders = splittedPath[0];
             for (int i = 1; i < splittedPath.Length - 1; i++)
             {
-                if (!AssetDatabase.GetSubFolders(builtFolders).Contains(splittedPath[i]))
+                if (!AssetDatabase.GetSubFolders(builtFolders).Contains(builtFolders + "/" + splittedPath[i]))
                     AssetDatabase.CreateFolder(builtFolders, splittedPath[i]);
                 builtFolders += "/" + splittedPath[i];
             }

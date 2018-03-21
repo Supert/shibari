@@ -10,13 +10,6 @@ namespace Shibari.Editor
     [InitializeOnLoad]
     public class Model : UnityEditor.AssetModificationProcessor
     {
-        static string[] OnWillSaveAssets(string[] paths)
-        {
-            if (paths.Any(p => p == Shibari.Model.SETTINGS_PATH))
-                RefreshModel();
-            return paths;
-        }
-
         Model()
         {
             PrefabUtility.prefabInstanceUpdated += OnPrefabInstanceUpdate;

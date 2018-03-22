@@ -1,11 +1,13 @@
-# Shibari
-Unity3d data binding framework with strong typing support.
+## Shibari
+
+Shibari is Unity3d data binding framework with strong typing support.
 
 ![Editor view](screenshot_editor.png?raw=true "Editor")
 
 ![Source code sample](screenshot_source.png?raw=true "Source")
 
-# Minimal setup
+## Minimal setup
+
 1. Set ``Player Settings/Api Compatibility Level`` to ``Experimental (.NET 4.6 Equivalent)``.
 2. Add required dependencies to your project:
     1. [ClassTypeReference](https://github.com/rotorz/unity3d-class-type-reference)
@@ -22,32 +24,33 @@ public class ShibariRootNode : BindableData
 ```
 4. Pick it as a root node in ``Settings/Shibari`` menu.
 
-#Examples
+## Examples
+
 You can find a showcase project for my framework [here](https://github.com/Supert/village-keeper). It shows everything my framework is capable of and is close enough to a project you could make in real world of game development.
 
-# Attributes
+## Attributes
 
-## SerializeValue
+### SerializeValue
 
 Marks AssignableValue property as serializable to and from json. Supports classes inherited from AssignableValue.
 
-## ShowInEditor
+### ShowInEditor
 
-Marks BindableData and BindableValue properties to be shown in the editor of BindableView. Also marks methods to be shown in the editor if BindableHandlerView.
+Marks BindableData and BindableValue properties to be shown in the editor of BindableView. Also marks methods to be shown in the editor of BindableHandlerView.
 
-### Supported method parameters
+#### Supported method parameters
 
 1. ()
 2. (BindableHandlerView)
 3. (BindableHandlerView, string)
 
-# Classes
+## Classes
 
-## Model
+### Model
 
 Static class. Initializes RootNode of type specified in Shibari/Settings menu.
 
-### static BindableData RootNode
+#### public static BindableData RootNode
 
 Returns RootNode of your model. Due to technical limitations it returns your root node as an object of base type BindableData. For your convenience, I recommend you to encapsulate it somewhere in your project. For example:
 
@@ -61,102 +64,118 @@ public static YourBindableData RootNode
 }
 ```
 
-## BindableData
+### BindableData
 
 BindableData is a base class for your model nodes. Add another BindableData properties to that class to create tree structure of your model. Add BindableValue properties to store and use values. Mark your BindableData properties with ShowInEditor attribute to it contents visible in editor.
 
-## BindableValue``<TValue>``
+#### public static BindableData GetDeserializedData(string _serialized_, Type _type_)
+
+Returns new instance of _type_ and populates it's AssignableValues from json text passed in _serialized_ parameter. Type has to be inherited from BindableData. It only populates AssignableValue properties marked with ``[SerializeValue]`` attribute.
+
+#### public static T GetDeserializedData``<T>``(string _serialized_) where T : BindableData
+
+Returns new instance of type _T_ and populates it's AssignableValues from json text passed in _serialized_ parameter. It only populates AssignableValue properties marked with ``[SerializeValue]`` attribute.
+
+#### public void Deserialize(string _serialized_)
+
+Populates AssignableValues of an object with values from json passed in _serialized_ parameter. It only populates AssignableValue properties marked with ``[SerializeValue]`` attribute.
+
+#### public string Serialize()
+
+Returns json serialized object.
+
+### BindableValue``<TValue>``
 
 Abstract class of a value stored in a BindableData.
 
-### public TValue Get()
+#### public TValue Get()
 
 Returns stored value.
 
-### public event Action OnValueChanged
+#### public event Action OnValueChanged
 
 Event that rises when value has changed.
 
-## AssignableValue``<TValue>``
+### AssignableValue``<TValue>``
 
 BindableValue``<TValue>`` which allows value to be assigned.
 
-### public void Set(TValue value)
+#### public void Set(TValue value)
 
 Sets value of AssignableValue``<TValue>``.
 
-## CalculatedValue``<TValue>``.
+### CalculatedValue``<TValue>``.
 
 BindableValue``<TValue>`` that subscribes to other BindableValues. When one of these values changes, stored value changes, too.
 
-### public CalculatedValue(Func``<TValue>`` calculateValueFunction, IEnumerable``<IBindable>`` subscribeTo)
-Constructor. Binds to values specified in subscribeTo parameter. When one of these values changes, CalculatedValue sets value to a result of calculateValueFunction.
+#### public CalculatedValue(Func``<TValue>`` _calculateValueFunction_, IEnumerable``<IBindable>`` _subscribeTo_)
+Constructor. Binds to values specified in _subscribeTo_ parameter. When one of these values changes, CalculatedValue sets value to a result of _calculateValueFunction_.
 
-# UI Classes
+## UI Classes
 
-## BindableHandlerView : MonoBehaviour
+### BindableHandlerView : MonoBehaviour
 
 Base abstract class for View-to-Model connection. It binds to a method specified in Unity Editor and calls it when specified conditions are met (for example, ButtonView calls it's method when button is clicked).
 
-### protected virtual void Invoke()
+#### protected virtual void Invoke()
 Call it to execute a binded method.
 
-## ButtonView : BindableHandlerView
+### ButtonView : BindableHandlerView
 
 BindableHandlerView which calls it's method when button is clicked.
 
-## BindableView : MonoBehaviour
+### BindableView : MonoBehaviour
 
 Base abstract class for Model-to-View and both-ways connection.
 
-### public abstract BindableValueRestraint[] BindableValueRestraints { get; }
+#### public abstract BindableValueRestraint[] BindableValueRestraints { get; }
 
 Implement to specify number of binded values, type of their contents and if they should be assignable or not.
 
-### protected BindableValueInfo[] BindedValues { get; }
+#### protected BindableValueInfo[] BindedValues { get; }
 
 Return list of BindableValues binded to view. Specify them in view's editor.
 
-### protected abstract void OnValueChanged()
+#### protected abstract void OnValueChanged()
 
 This method is called when one of the binded values has changed.
 
-## DropdownView : BindableView
+### DropdownView : BindableView
 
 Populates UnityEngine.UI.Dropdown view with contents of the second BindedValue and binds index of selected item to the first one.
 
-## EnabledView : BindableView
+### EnabledView : BindableView
 
 Sets GameObject active or inactive depending on it's boolean BindedValue.
 
-## FillerBindableView : BindableView
+### FillerBindableView : BindableView
 
 Sets Image.fillAmount to it's float BindedValue.
 
-## ImageBindableView : BindableView
+### ImageBindableView : BindableView
 
 Sets Image.Sprite to it's Sprite BindedValue.
 
-## InputView : BindableView
+### InputView : BindableView
 
 Provides two-way connection between InputField and string BindedValue.
 
-## InteractableView : BindableView
+### InteractableView : BindableView
 
 Sets Selectable.interactable to boolean BindedValue.
 
-## SelectableSpritesView : BindableView
+### SelectableSpritesView : BindableView
 
 Sets Selectable sprites to SelectableSprites BindedValue.
 
-## SliderView
+### SliderView
 
 Provides two-way connection between Slider and float BindedValue.
 
-## TextBindableView
+### TextBindableView
 
 Sets Text.text to string BindedValue.
 
-## ToggleView
+### ToggleView
 
 Provides two-way connection between Toggle.isOn and boolean BindedValue.

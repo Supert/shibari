@@ -28,7 +28,7 @@ public class ShibariRootNode : BindableData
 
 You can find a showcase project for my framework [here](https://github.com/Supert/village-keeper). It shows everything my framework is capable of and is close enough to a project you could make in real world of game development.
 
-# Attributes
+## Attributes
 
 ### SerializeValue
 
@@ -77,9 +77,11 @@ Returns new instance of _type_ and populates it's AssignableValues from json tex
 Returns new instance of type _T_ and populates it's AssignableValues from json text passed in _serialized_ parameter. It only populates AssignableValue properties marked with ``[SerializeValue]`` attribute.
 
 #### public void Deserialize(string _serialized_)
+
 Populates AssignableValues of an object with values from json passed in _serialized_ parameter. It only populates AssignableValue properties marked with ``[SerializeValue]`` attribute.
 
 #### public string Serialize()
+
 Returns json serialized object.
 
 ### BindableValue``<TValue>``

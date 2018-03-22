@@ -184,12 +184,6 @@ namespace Shibari
             return (T)GetDeserializedData(serialized, typeof(T));
         }
 
-        public static string GetNameAndParamsFromMethodInfo(MethodInfo methodInfo)
-        {
-
-            string parameters = string.Join(", ", methodInfo.GetParameters().Select(p => p.ParameterType.Name));
-            return $"{methodInfo.Name}({parameters})";
-        }
 
         public static bool HasSerializeableValuesInChilds(Type t)
         {
@@ -229,6 +223,13 @@ namespace Shibari
         #endregion
 
         #region private static methods
+        private static string GetNameAndParamsFromMethodInfo(MethodInfo methodInfo)
+        {
+
+            string parameters = string.Join(", ", methodInfo.GetParameters().Select(p => p.ParameterType.Name));
+            return $"{methodInfo.Name}({parameters})";
+        }
+
         private static bool CheckTypeTreeByPredicate(Type type, Func<Type, bool> predicate)
         {
             while (type != typeof(object))

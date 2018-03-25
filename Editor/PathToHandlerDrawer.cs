@@ -11,7 +11,6 @@ namespace Shibari.Editor
         {
             var value = property.FindPropertyRelative("value");
             value.stringValue = MultiLevelDropDownUtility.DrawControl(position, label, value.stringValue, BindableData.GetBindableHandlersPaths(Shibari.Model.RootNodeType, "").ToList());
-
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Shibari
             if (settings == null)
                 InitializeSettingsPrefab();
             settings = Resources.Load<ShibariSettings>("ShibariSettings");
-            RootNodeType = settings.RootNodeType.Type;
+            RootNodeType = GetBindableDataTypes().FirstOrDefault(t => t.FullName == settings.RootNodeType.value);
             if (RootNodeType == null)
             {
                 Debug.LogError("Please, set root node type in Shibari/Settings menu.");

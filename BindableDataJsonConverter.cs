@@ -56,7 +56,7 @@ namespace Shibari
                             reflected.SetValue(elements);
                             continue;
                         }
-                        reflected.SetValue(serialized.ToObject(reflected.ValueType));
+                        reflected.SetValue(serialized.Value.ToObject(reflected.ValueType));
                         continue;
                     }
                     else

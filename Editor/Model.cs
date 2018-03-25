@@ -45,6 +45,16 @@ namespace Shibari.Editor
         public static void RefreshTemplates()
         {
             var types = Shibari.Model.GetBindableDataTypes().Where(t => BindableData.HasSerializeableValuesInChilds(t));
+
+            string[] splittedPath = Shibari.Model.SERIALIZATION_TEMPLATES.Split('/');
+            string builtFolders = splittedPath[0];
+            for (int i = 1; i < splittedPath.Length - 1; i++)
+            {
+                if (!AssetDatabase.GetSubFolders(builtFolders).Contains(builtFolders + "/" + splittedPath[i]))
+                    AssetDatabase.CreateFolder(builtFolders, splittedPath[i]);
+                builtFolders += "/" + splittedPath[i];
+            }
+
             foreach (var path in Directory.GetFiles(Shibari.Model.SERIALIZATION_TEMPLATES).Where(p => !types.Any(t => p == $"{Shibari.Model.SERIALIZATION_TEMPLATES}{t.FullName}.json")))
             {
                 FileInfo file = new FileInfo($"{path}");

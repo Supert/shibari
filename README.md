@@ -8,11 +8,11 @@ Shibari is Unity3d data binding framework with strong typing support.
 
 ## Minimal setup
 
-1. Clone this repository into Assets/Shibari subfolder of your project ~~or import Asset Store package (not yet published)~~.
-2. Set ``Player Settings/Api Compatibility Level`` to ``Experimental (.NET 4.6 Equivalent)``.
-3. Add required dependencies to your project:
+1.  Clone this repository into Assets/Shibari subfolder of your project ~~or import Asset Store package (not yet published)~~.
+2.  Set ``Player Settings/Api Compatibility Level`` to ``Experimental (.NET 4.6 Equivalent)``.
+3.  Add required dependencies to your project:
     * [JsonNET](https://www.newtonsoft.com/json), or [package from Wanzyee studio](https://assetstore.unity.com/packages/tools/input-management/json-net-converters-simple-compatible-solution-58621), or [package from ParentElement, LLC](https://assetstore.unity.com/packages/tools/input-management/json-net-for-unity-11347)
-4. Create a new class inherited from Shibari.BindableData:
+4.  Create a new class inherited from Shibari.BindableData:
 ```csharp
 using Shibari;
 
@@ -22,7 +22,7 @@ public class ShibariRootNode : BindableData
     
 }
 ```
-4. Pick it as a root node in ``Settings/Shibari`` menu.
+5.  Pick it as a root node in ``Settings/Shibari`` menu.
 
 ## Examples
 

@@ -58,8 +58,11 @@ namespace Shibari
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
         {
-            RootNode = (BindableData)Activator.CreateInstance(RootNodeType);
-            RootNode.Initialize();
+            if (RootNode == null)
+            {
+                RootNode = (BindableData)Activator.CreateInstance(RootNodeType);
+                RootNode.Initialize();
+            }
         }
 
         public static IEnumerable<Type> GetBindableDataTypes()

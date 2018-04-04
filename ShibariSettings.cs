@@ -4,6 +4,6 @@ namespace Shibari
 {
     public class ShibariSettings : MonoBehaviour
     {
-        public PathToBindableData RootNodeType; 
+        public PathToNode RootNodeType; 
     }
 }

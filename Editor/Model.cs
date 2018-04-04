@@ -44,7 +44,7 @@ namespace Shibari.Editor
 
         public static void RefreshTemplates()
         {
-            var types = Shibari.Model.GetBindableDataTypes().Where(t => BindableData.HasSerializeableValuesInChilds(t));
+            var types = Shibari.Model.GetNodeTypes().Where(t => Node.HasSerializeableValuesInChilds(t));
 
             string[] splittedPath = Shibari.Model.SERIALIZATION_TEMPLATES.Split('/');
             string builtFolders = splittedPath[0];

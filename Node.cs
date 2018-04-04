@@ -7,20 +7,20 @@ using System.Reflection;
 
 namespace Shibari
 {
-    public abstract class BindableData
+    public abstract class Node
     {
         public ReadOnlyDictionary<string, BindableValueInfo> Values { get; private set; }
         public ReadOnlyDictionary<string, AssignableValueInfo> AssignableValues { get; private set; }
         public ReadOnlyDictionary<string, MethodInfo> BindableHandlers { get; private set; }
 
-        public ReadOnlyDictionary<string, BindableData> Childs { get; private set; }
+        public ReadOnlyDictionary<string, Node> Childs { get; private set; }
 
-        private static readonly BindableDataJsonConverter converter = new BindableDataJsonConverter();
+        private static readonly NodeJsonConverter converter = new NodeJsonConverter();
 
         #region public static methods
         public static IEnumerable<string> GetBindableHandlersPaths(Type type, string prefix)
         {
-            IEnumerable<string> result = GetBindableDatas(type)
+            IEnumerable<string> result = GetChildNodes(type)
                 .SelectMany(property => GetBindableHandlersPaths(property.PropertyType, prefix + property.Name + "/"));
 
             return result.Concat(GetBindableHandlers(type).Select(m => $"{prefix}{GetNameAndParamsFromMethodInfo(m)}"));
@@ -28,7 +28,7 @@ namespace Shibari
 
         public static IEnumerable<string> GetBindableValuesPaths(Type type, string prefix, bool isSetterRequired, bool isVisibleInEditorRequired, Type valueType = null)
         {
-            IEnumerable<string> result = GetBindableDatas(type)
+            IEnumerable<string> result = GetChildNodes(type)
                 .SelectMany(property => GetBindableValuesPaths(property.PropertyType, prefix + property.Name + "/", isSetterRequired, isVisibleInEditorRequired, valueType));
             if (isSetterRequired)
             {
@@ -79,11 +79,11 @@ namespace Shibari
             }
         }
 
-        public static IEnumerable<PropertyInfo> GetBindableDatas(Type type)
+        public static IEnumerable<PropertyInfo> GetChildNodes(Type type)
         {
             return type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                 .Where(p => !p.GetMethod.IsPrivate)
-                .Where(p => IsBindableData(p.PropertyType));
+                .Where(p => IsNode(p.PropertyType));
         }
 
         public static IEnumerable<PropertyInfo> GetBindableValues(Type type)
@@ -150,19 +150,19 @@ namespace Shibari
                 && CheckTypeTreeByPredicate(property.PropertyType, (t) => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(AssignableValue<>));
         }
 
-        public static bool IsBindableData(Type type)
+        public static bool IsNode(Type type)
         {
-            var result = typeof(BindableData).IsAssignableFrom(type);
+            var result = typeof(Node).IsAssignableFrom(type);
             return result;
         }
 
-        public static BindableData GetDeserializedData(string serialized, Type type)
+        public static Node GetDeserializedData(string serialized, Type type)
         {
-            if (!typeof(BindableData).IsAssignableFrom(type))
+            if (!typeof(Node).IsAssignableFrom(type))
             {
-                throw new ArgumentException($"Type {typeof(BindableData)} is not assignable from type {type}");
+                throw new ArgumentException($"Type {typeof(Node)} is not assignable from type {type}");
             }
-            return (BindableData)JsonConvert.DeserializeObject(serialized, type, converter);
+            return (Node)JsonConvert.DeserializeObject(serialized, type, converter);
         }
 
         public static Type GetBindableValueValueType(Type propertyType)
@@ -179,7 +179,7 @@ namespace Shibari
             return t.GetGenericArguments()[0];
         }
 
-        public static T GetDeserializedData<T>(string serialized) where T : BindableData
+        public static T GetDeserializedData<T>(string serialized) where T : Node
         {
             return (T)GetDeserializedData(serialized, typeof(T));
         }
@@ -187,7 +187,7 @@ namespace Shibari
 
         public static bool HasSerializeableValuesInChilds(Type t)
         {
-            return GetSerializableValues(t).Any() || GetBindableDatas(t).Any(b => HasSerializeableValuesInChilds(b.PropertyType));
+            return GetSerializableValues(t).Any() || GetChildNodes(t).Any(b => HasSerializeableValuesInChilds(b.PropertyType));
         }
         #endregion
 
@@ -199,11 +199,11 @@ namespace Shibari
 
         public void Deserialize(string serialized)
         {
-            BindableData deserialized = GetDeserializedData(serialized, GetType());
+            Node deserialized = GetDeserializedData(serialized, GetType());
             Deserialize(deserialized);
         }
 
-        private void Deserialize(BindableData deserialized)
+        private void Deserialize(Node deserialized)
         {
             foreach (var property in deserialized.AssignableValues.Where(kvp => IsSerializableValue(kvp.Value.Property)))
             {
@@ -289,18 +289,18 @@ namespace Shibari
 
         private void InitializeChilds()
         {
-            var childs = new Dictionary<string, BindableData>();
+            var childs = new Dictionary<string, Node>();
 
-            var childProperties = GetBindableDatas(GetType());
+            var childProperties = GetChildNodes(GetType());
 
             foreach (var p in childProperties)
             {
-                childs[p.Name] = p.GetValue(this) as BindableData;
+                childs[p.Name] = p.GetValue(this) as Node;
 
                 childs[p.Name].Initialize();
             }
 
-            Childs = new ReadOnlyDictionary<string, BindableData>(childs);
+            Childs = new ReadOnlyDictionary<string, Node>(childs);
         }
         #endregion
     }

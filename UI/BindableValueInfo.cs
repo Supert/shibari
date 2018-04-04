@@ -13,7 +13,7 @@ namespace Shibari
         private MethodInfo getMethod;
         private MethodInfo invokeOnValueChangedMethod;
 
-        public BindableValueInfo(PropertyInfo property, BindableData owner)
+        public BindableValueInfo(PropertyInfo property, Node owner)
         {
             Property = property;
             BindableValue = property.GetValue(owner);

@@ -18,11 +18,11 @@ You know what's better than donut clicker game? ~~An actual donut~~ Three donut 
 2.  Set ``Player Settings/Api Compatibility Level`` to ``Experimental (.NET 4.6 Equivalent)``.
 3.  Add required dependencies to your project:
     * [JsonNET](https://www.newtonsoft.com/json), or [package from Wanzyee studio](https://assetstore.unity.com/packages/tools/input-management/json-net-converters-simple-compatible-solution-58621), or [package from ParentElement, LLC](https://assetstore.unity.com/packages/tools/input-management/json-net-for-unity-11347)
-4.  Create a new class inherited from Shibari.BindableData:
+4.  Create a new class inherited from Shibari.Node:
 ```csharp
 using Shibari;
 
-public class RootData : BindableData
+public class RootNode : Node
 {
     
 }
@@ -37,19 +37,23 @@ public class RootData : BindableData
 
 ## 4. Grokking your model
 
+Your model is basically an object of type you specify in ``Settings/Shibari`` menu. It extends Shibari.Node class and consist of bindable properties, handler methods and child nodes with similar structure. You can think about model as a [directed rooted tree](https://en.wikipedia.org/wiki/Tree_(graph_theory)#Rooted_tree).
+
 Model initialization happens [right before](https://docs.unity3d.com/ScriptReference/RuntimeInitializeLoadType.BeforeSceneLoad.html) your first scene loads. It consists of following steps:
 
 1. Root node instance is created.
 2. Root node instance is assigned to Shibari.Model.RootNode property.
 3. Shibari.Model.RootNode.Initialize() is called.
-4. BindableData.Initialize() method caches references to it's BindableValue properties, handler methods, and BindableData properties. Then it recursively calls Initialize() method on all BindableData properties.
+4. Shibari.Node.Initialize() method caches references to it's bindable properties, handler methods, and child nodes. Then it recursively calls Initialize() method on all Node properties.
 5. Model is ready to use now.
 
 At the moment of BindableData.Initialize() execution, all of object's BindableValue and BindableData properties have to be assigned. You can do it with auto-implemented properties, in a constructor, or in overriden Initialize() method, before base method is called.
 
-Most likely, you will use CalculatedValue properties. They could refer to other properties of the same or another object of your model. These properties should be assigned prior to CalculatedValue's constructor invocation. There are several things to consider:
+Most likely, you will use CalculatedValue properties. They could refer to other properties of the same or another object of your model. These properties should be assigned prior to CalculatedValue's constructor invocation. 
 
-1. You can't reference object's instance member from [auto-implemented property](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/auto-implemented-properties). It means that you cannot auto-implement CalculatedValue if it references BindableValue of the same object. Assign it in object's constructor instead.
-2. You have to create your model objects in a strict order, from referenced object to referencing one. The messier your model interactions are, the harder it will be to figure out the right order. And it could be harder to implement if your model hierarchy is too deep.
-3. Avoid recursive hierarchy (type A has property of type B which has property of type A).
+There are several things to consider:
+
+1. You can't reference object's member from [auto-implemented property](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/auto-implemented-properties). It means that you cannot auto-implement CalculatedValue if it references BindableValue of the same node. Assign it in object's constructor instead.
+2. You have to create your node objects in a strict order, from referenced object to referencing one. The messier your model interactions are, the harder it will be to figure out the right order. And it could be harder to implement if your model hierarchy is too deep.
+3. Avoid recursive hierarchy *(type A has property of type B which has property of type A...)* since there is no way to stop a recursion.
 4. Assign all of RootNode object's properties in it's Initialize() method, before base.Initialize() call. It guarantees that Model.RootNode is assigned and can be used by CalculatedValue constructors.

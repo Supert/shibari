@@ -8,12 +8,11 @@ using UnityEngine;
 
 namespace Shibari
 {
-
-    internal class BindableDataJsonConverter : JsonConverter
+    internal class NodeJsonConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
-            return typeof(BindableData).IsAssignableFrom(objectType);
+            return typeof(Node).IsAssignableFrom(objectType);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -21,10 +20,10 @@ namespace Shibari
             if (reader.TokenType == JsonToken.Null)
                 return null;
 
-            BindableData instance = (BindableData)existingValue;
+            Node instance = (Node)existingValue;
             if (instance == null)
             {
-                instance = (BindableData)Activator.CreateInstance(objectType);
+                instance = (Node)Activator.CreateInstance(objectType);
                 instance.Initialize();
             }
 
@@ -34,7 +33,7 @@ namespace Shibari
                 if (instance.AssignableValues.ContainsKey(serialized.Name))
                 {
                     AssignableValueInfo reflected = instance.AssignableValues[serialized.Name];
-                    if (BindableData.IsSerializableValue(reflected.Property))
+                    if (Node.IsSerializableValue(reflected.Property))
                     {
                         if (serialized.Value.Type == JTokenType.Array)
                         {
@@ -78,9 +77,9 @@ namespace Shibari
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             JObject jsonObject = new JObject();
-            BindableData data = (BindableData)value;
+            Node data = (Node)value;
 
-            foreach (var property in data.Values.Where(p => BindableData.IsSerializableValue(p.Value.Property)))
+            foreach (var property in data.Values.Where(p => Node.IsSerializableValue(p.Value.Property)))
             {
                 object v = property.Value.GetValue();
                 if (v == null)
@@ -105,8 +104,8 @@ namespace Shibari
 
         public static string GenerateJsonTemplate(Type type)
         {
-            if (!typeof(BindableData).IsAssignableFrom(type))
-                throw new ArgumentException("Type should be child of BindableData", "type");
+            if (!typeof(Node).IsAssignableFrom(type))
+                throw new ArgumentException("Type should be child of Shibari.Node", "type");
 
             JObject jsonObject = GenerateJsonObject(type);
             
@@ -117,9 +116,9 @@ namespace Shibari
         {
             JObject jsonObject = new JObject();
 
-            foreach (var property in BindableData.GetSerializableValues(type))
+            foreach (var property in Node.GetSerializableValues(type))
             {
-                Type valueType = BindableData.GetBindableValueValueType(property.PropertyType);
+                Type valueType = Node.GetBindableValueValueType(property.PropertyType);
 
                 if (valueType.IsValueType)
                 {
@@ -135,7 +134,7 @@ namespace Shibari
                 }
             }
 
-            foreach (var property in BindableData.GetBindableDatas(type).Where(t => BindableData.HasSerializeableValuesInChilds(t.PropertyType)))
+            foreach (var property in Node.GetChildNodes(type).Where(t => Node.HasSerializeableValuesInChilds(t.PropertyType)))
             {
                 jsonObject.Add(new JProperty(property.Name, GenerateJsonObject(property.PropertyType)));
             }

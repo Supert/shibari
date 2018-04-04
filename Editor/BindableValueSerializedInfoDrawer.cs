@@ -21,7 +21,7 @@ namespace Shibari.Editor
                 position, 
                 label, 
                 property.FindPropertyRelative("pathInModel").stringValue, 
-                BindableData.GetBindableValuesPaths(Shibari.Model.RootNodeType, "", false, true, bindableIds.allowedValueType).ToList()
+                Node.GetBindableValuesPaths(Shibari.Model.RootNodeType, "", false, true, bindableIds.allowedValueType).ToList()
             );
 
             property.serializedObject.ApplyModifiedProperties();

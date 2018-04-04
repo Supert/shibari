@@ -13,7 +13,7 @@ namespace Shibari
         public const string SETTINGS_PATH = "Assets/Shibari/Resources/ShibariSettings.prefab";
         public const string SERIALIZATION_TEMPLATES = "Assets/Shibari/Templates/";
 
-        public static BindableData RootNode { get; private set; }
+        public static Node RootNode { get; private set; }
         public static Type RootNodeType { get; private set; }
 
         static Model()
@@ -43,7 +43,7 @@ namespace Shibari
             if (settings == null)
                 InitializeSettingsPrefab();
             settings = Resources.Load<ShibariSettings>("ShibariSettings");
-            RootNodeType = GetBindableDataTypes().FirstOrDefault(t => t.FullName == settings.RootNodeType.value);
+            RootNodeType = GetNodeTypes().FirstOrDefault(t => t.FullName == settings.RootNodeType.value);
             if (RootNodeType == null)
             {
                 Debug.LogError("Please, set root node type in Shibari/Settings menu.");
@@ -60,38 +60,38 @@ namespace Shibari
         {
             if (RootNode == null)
             {
-                RootNode = (BindableData)Activator.CreateInstance(RootNodeType);
+                RootNode = (Node)Activator.CreateInstance(RootNodeType);
                 RootNode.Initialize();
             }
         }
 
-        public static IEnumerable<Type> GetBindableDataTypes()
+        public static IEnumerable<Type> GetNodeTypes()
         {
             var executingAssembly = Assembly.GetExecutingAssembly();
-            IEnumerable<Type> result = GetBindableDataTypesInAssembly(executingAssembly);
+            IEnumerable<Type> result = GetNodeTypesInAssembly(executingAssembly);
 
-            result = result.Concat(executingAssembly.GetReferencedAssemblies().SelectMany(assembly => GetBindableDataTypesInAssembly(Assembly.Load(assembly))));
+            result = result.Concat(executingAssembly.GetReferencedAssemblies().SelectMany(assembly => GetNodeTypesInAssembly(Assembly.Load(assembly))));
             return result;
         }
 
         public static string GenerateSerializationTemplate(Type t)
         {
-            if (!typeof(BindableData).IsAssignableFrom(t))
-                throw new ArgumentException("Type t should be child of BindableData", "t");
+            if (!typeof(Node).IsAssignableFrom(t))
+                throw new ArgumentException("Type t should be child of Shibari.Node", "t");
 
-            return BindableDataJsonConverter.GenerateJsonTemplate(t);
+            return NodeJsonConverter.GenerateJsonTemplate(t);
         }
 
-        public static string GenerateSerializationTemplate<T>() where T : BindableData
+        public static string GenerateSerializationTemplate<T>() where T : Node
         {
             return GenerateSerializationTemplate(typeof(T));
         }
 
-        private static IEnumerable<Type> GetBindableDataTypesInAssembly(Assembly assembly)
+        private static IEnumerable<Type> GetNodeTypesInAssembly(Assembly assembly)
         {
             return assembly.GetTypes()
                 .Where(t => !t.IsAbstract)
-                .Where(t => typeof(BindableData).IsAssignableFrom(t));
+                .Where(t => typeof(Node).IsAssignableFrom(t));
         }
     }
 }

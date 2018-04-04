@@ -9,7 +9,7 @@ namespace Shibari
     {
         private MethodInfo setMethod;
 
-        public AssignableValueInfo(PropertyInfo property, BindableData owner) : base(property, owner)
+        public AssignableValueInfo(PropertyInfo property, Node owner) : base(property, owner)
         {
             setMethod = BindableValue.GetType().GetMethod("Set", new Type[1] { ValueType });
         }

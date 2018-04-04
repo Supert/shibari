@@ -1,7 +1,7 @@
 ﻿namespace Shibari
 {
     [System.Serializable]
-    public class PathToBindableData
+    public class PathToNode
     {
         [SerializeValue]
         public string value;

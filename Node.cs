@@ -278,9 +278,15 @@ namespace Shibari
 
             foreach (var p in valueProperties)
             {
-                values[p.Name] = new BindableValueInfo(p, this);
                 if (IsAssignableValue(p.PropertyType))
+                {
                     assignableValues[p.Name] = new AssignableValueInfo(p, this);
+                    values[p.Name] = assignableValues[p.Name];
+                }
+                else
+                {
+                    values[p.Name] = new BindableValueInfo(p, this);
+                }
             }
 
             Values = new ReadOnlyDictionary<string, BindableValueInfo>(values);

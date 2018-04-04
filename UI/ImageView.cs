@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace VillageKeeper.UI
 {
     [RequireComponent(typeof(Image))]
-    public class ImageBindableView : BindableView
+    public class ImageView : BindableView
     {
         private BindableValueRestraint[] bindableValueRestraints = new BindableValueRestraint[1] 
         {
@@ -20,6 +20,7 @@ namespace VillageKeeper.UI
         protected override void Awake()
         {
             image = GetComponent<Image>();
+            base.Awake();
         }
 
         protected override void OnValueChanged()

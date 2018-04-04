@@ -33,6 +33,16 @@ namespace Shibari.UI
         protected virtual void Awake()
         {
             Initialize();
+
+            onValueChangedDelegate = Delegate.CreateDelegate(typeof(Action), this, "OnValueChanged");
+
+            BindedValues = new BindableValueInfo[serializedInfos.Length];
+
+            for (int i = 0; i < serializedInfos.Length; i++)
+            {
+                BindedValues[i] = GetField(serializedInfos[i]);
+                BindedValues[i].EventInfo.AddEventHandler(BindedValues[i].BindableValue, onValueChangedDelegate);
+            }
         }
 
         protected abstract void OnValueChanged();
@@ -41,15 +51,6 @@ namespace Shibari.UI
 
         protected virtual void Start()
         {
-            onValueChangedDelegate = Delegate.CreateDelegate(typeof(Action), this, "OnValueChanged");
-            BindedValues = new BindableValueInfo[serializedInfos.Length];
-
-            for (int i = 0; i < serializedInfos.Length; i++)
-            {
-                BindedValues[i] = GetField(serializedInfos[i]);
-                BindedValues[i].EventInfo.AddEventHandler(BindedValues[i].BindableValue, onValueChangedDelegate);
-            }
-
             OnValueChanged();
         }
 

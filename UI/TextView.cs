@@ -1,12 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
-using System;
 
 namespace Shibari.UI
 {
     [RequireComponent(typeof(Text))]
-    public class TextBindableView : BindableView
+    public class TextView : BindableView
     {
         private BindableValueRestraint[] bindableValueTypes = new BindableValueRestraint[1] 
         {

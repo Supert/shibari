@@ -29,7 +29,174 @@ public class RootNode : Node
 ```
 5.  Pick it as a root node in ``Settings/Shibari`` menu.
 
-## 3a. 
+## 3a. Using default BindableViews
+
+### 3a.1. Preparing the model
+
+Let's split our model in two different nodes: player node stores a score, and UI node has everything that views interact with.
+
+Make two new classes:
+
+```csharp
+using Shibari;
+using UnityEngine;
+
+public class UiNode : Node
+{
+    //Marks property to be serialized to json.
+    [SerializeValue]
+    //It's good practice to store resource paths in separate json file.
+    public AssignableValue<string> DonutSpritePath { get; } = new AssignableValue<string>();
+
+    [SerializeValue]
+    //The same applies to user-friendly text labels. 
+    //If you need to support various languages, you can make separate localization node and feed different json files to it, depending on user's language.
+    public AssignableValue<string> ScoreFormat { get; } = new AssignableValue<string>();
+
+    //Marks property to be visible in the editor.
+    [ShowInEditor]
+    public CalculatedValue<string> ScoreLabel { get; }
+
+    [ShowInEditor]
+    public AssignableValue<int> CurrentDonut { get; } = new AssignableValue<int>();
+
+    [SerializeValue, ShowInEditor]
+    public AssignableValue<string[]> DonutTypes { get; } = new AssignableValue<string[]>();
+
+    [ShowInEditor]
+    public CalculatedValue<Sprite> CurrentDonutSprite { get; }
+
+    public UiNode()
+    {
+        //Refer to "Grokking your model" chapter.
+        CurrentDonutSprite = new CalculatedValue<Sprite>(() => Resources.Load<Sprite>(string.Format(DonutSpritePath, CurrentDonut)), DonutSpritePath, CurrentDonut);
+        ScoreLabel = new CalculatedValue<string>(() => string.Format(ScoreFormat, RootNode.Instance.PlayerNode.Score), ScoreFormat, RootNode.Instance.PlayerNode.Score);
+    }
+
+    //Mark method to be visible in editor.
+    [ShowInEditor]
+    public void OnDonutClicked()
+    {
+        //BindableValue<T> has implicit conversion to type T, but doing the opposite does not seem possible. 
+        //In a satisfactory way, at least.
+        RootNode.Instance.PlayerNode.Score.Set(RootNode.Instance.PlayerNode.Score + 1);
+    }
+
+    //Assign new random donut if score is divisible by ten.
+    public void OnPlayerScoreChanged()
+    {
+        if (RootNode.Instance.PlayerNode.Score % 10 == 0)
+        {
+            int nextDonut = Random.Range(0, DonutTypes.Get().Length);
+            CurrentDonut.Set(nextDonut);
+        }
+    }
+
+    public override void Initialize()
+    {
+        RootNode.Instance.PlayerNode.Score.OnValueChanged += OnPlayerScoreChanged;
+        base.Initialize();
+    }
+}
+```
+
+```csharp
+using Shibari;
+using UnityEngine;
+
+public class PlayerNode : Node
+{
+    [SerializeValue]
+    public AssignableValue<int> Score { get; } = new AssignableValue<int>();
+
+    //Save player node to PlayerPrefs.
+    public void Save()
+    {
+        PlayerPrefs.SetString("donut_score", Serialize());
+        //PlayerPrefs.Save() is pretty heavy. Usually, you don't want to call it every time something is changed.
+        PlayerPrefs.Save();
+    }
+
+    //Load player node from PlayerPrefs.
+    public void Load()
+    {
+        if (PlayerPrefs.HasKey("donut_score"))
+            Deserialize(PlayerPrefs.GetString("donut_score"));
+    }
+
+    public override void Initialize()
+    {
+        //Save player node each time score has changed.
+        Score.OnValueChanged += Save;
+        base.Initialize();
+    }
+}
+```
+
+Finally, modify RootNode class:
+
+```csharp
+using Shibari;
+using UnityEngine;
+
+public class RootNode : Node
+{
+
+    //Marks node's contents visible in the editor. By default, node is hidden even if it has properties marked with ShowInEditor attribute. It's made this way for consistency reasons.
+    [ShowInEditor]
+    public UiNode UiNode { get; private set; }
+
+    //We don't need player node to be visible in editor. 
+    public PlayerNode PlayerNode { get; private set; }
+
+    //Simple property to encapsulate explicit convertion from Node to RootNode.
+    public static RootNode Instance { get { return (RootNode)Model.RootNode; } }
+
+    public override void Initialize()
+    {
+        //We can't use auto-implemented properties in our RootData or instantiate nodes in RootNode constructor. 
+        //If we do so, instance of RootNode would not be yet assigned to a Model.RootNode at the moment of initialization of our UiData.
+        //Refer to "Grokking your model" chapter for further read.
+        PlayerNode = new PlayerNode();
+        UiNode = new UiNode();
+
+        base.Initialize();
+
+        //Model is ready to use.
+        
+        //Load UI node values from json file.
+        UiNode.Deserialize(Resources.Load<TextAsset>("UiNode").text);
+        
+        PlayerNode.Load();
+    }
+}
+```
+
+### 3a.2. Prepare resources
+
+Create new text file in ``Assets/Resources`` folder and name it "UiNode.json":
+
+```json
+{
+  "DonutSpritePath": "Donuts/{0}",
+  "ScoreFormat": "Score: {0}",
+  "DonutTypes": ["No topping", "Chocolate topping", "Stuffed donut"]
+}
+```
+
+Create three programmer art donut sprites in ``Assets/Resources/Donut`` folder. Or skip this step, if you are fine with white square donuts.
+
+### 3a.3. Prepare scene
+
+* Create new Unity scene.
+* Add Canvas to it (right click inside Hierarchy view, then pick UI/Canvas option).
+* Add UI/Text to your canvas, then add TextView component to it. Pick ``UiNode/ScoreLabel`` in it's inspector.
+* Make an UI/Button and add ButtonView component. Pick ``UiNode/OnDonutClicked()``. Then add ImageView and pick ``UiNode/CurrentDonutSprite``.
+* Create UI/Dropdown and add DropdownView component to it. Pick ``UiNode/CurrentDonut`` and ``UiNode/DonutTypes``.
+
+### 3a.4. Enjoy
+
+Our little game is ready to be played.
 
 ## 3b. 
 

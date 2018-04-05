@@ -2,7 +2,7 @@
 
 This tutorial covers most of the stuff you can do with Shibari framework, which includes implementing a model, binding it to views, and making data persistent.
 
-We'll create a simplistic donut clicker game. Each time player clicks the donut, their highscore increases by one. The highscore is saved between sessions. Every ten clicks the donut changes its look. The player can change donut appearance manually by the dropdown menu. 
+We'll create a simplistic donut clicker game. Each time the player clicks the donut, their highscore increases by one. The highscore is saved between sessions. Every ten clicks the donut changes its look. The player can change donut appearance manually by the dropdown menu. 
 
 You know what's better than a donut clicker game? ~~An actual donut~~ Three donut clicker games! We'll do it in three different ways:
 
@@ -10,7 +10,7 @@ You know what's better than a donut clicker game? ~~An actual donut~~ Three donu
 
 2. Using custom BindableViews: Sometimes we have complex or weird views. You can extend BindableView the same way I did it for, say, SliderView. 
 
-3. Using script which is not BindableView at all: Sometimes we need to access a model from our business logic. Sometimes we want to simply hardcode a reference to model's property. Sometimes we want a framework to be as non-invasive as possible. In such cases, you can call model properties directly.
+3. Using script which is not BindableView at all: Sometimes we need to access a model from our business logic. Sometimes we want to simply hardcode a reference to a model's property. Sometimes we want a framework to be as non-invasive as possible. In such cases, you can call model properties directly.
 
 ## 2. Initial Setup
 
@@ -174,7 +174,7 @@ public class RootNode : Node
 
 ### 3a.2. Prepare resources
 
-Create new text file in ``Assets/Resources`` folder and name it "UiNode.json":
+Create a new text file in ``Assets/Resources`` folder and name it "UiNode.json":
 
 ```json
 {
@@ -214,13 +214,13 @@ Model initialization happens [right before](https://docs.unity3d.com/ScriptRefer
 4. Shibari.Node.Initialize() method caches references to it's bindable properties, handler methods, and child nodes. Then it recursively calls Initialize() method on all Node properties.
 5. Model is ready to use now.
 
-At the moment of BindableData.Initialize() execution, all of object's BindableValue and BindableData properties have to be assigned. You can do it with auto-implemented properties, in a constructor, or in overriden Initialize() method, before base method is called.
+At the moment of BindableNode.Initialize() execution, all of the object's bindable values and child nodes have to be assigned. You can do it with auto-implemented properties, in a constructor, or in overriden Initialize() method, before base method is called.
 
 Most likely, you will use CalculatedValue properties. They could refer to other properties of the same or another object of your model. These properties should be assigned prior to CalculatedValue's constructor invocation. 
 
 There are several things to consider:
 
-1. You can't reference object's member from [auto-implemented property](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/auto-implemented-properties). This means that that you cannot auto-implement CalculatedValue if it references BindableValue of the same node. Assign it in object's constructor instead.
+1. You can't reference an object's member from [auto-implemented property](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/auto-implemented-properties). This means that that you cannot auto-implement CalculatedValue if it references BindableValue of the same node. Assign it in an object's constructor instead.
 2. You have to create your node objects in a strict order, from referenced object to referencing one. The messier your model interactions are, the harder it will be to figure out the right order. And it could be harder to implement if your model hierarchy is too deep.
 3. Avoid recursive hierarchy *(type A has property of type B which has property of type A...)* since there is no way to stop a recursion.
 4. Assign all of RootNode object's properties in it's Initialize() method, before base.Initialize() call. It guarantees that Model.RootNode is assigned and can be used by CalculatedValue constructors.

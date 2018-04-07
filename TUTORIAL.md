@@ -198,9 +198,313 @@ Create three programmer art donut sprites in ``Assets/Resources/Donut`` folder. 
 
 Our little game is ready to be played.
 
-## 3b. 
+## 3b. Using a custom BindableView
 
-## 3c.
+### 3b.0. Start from a scratch
+
+Revert changes to your project you've made in chapter 3a.
+
+### 3b.1. Prepare your model
+
+Let's break our model in two nodes: player node stores player score, and UI node stores resources and localization info.
+
+Make two new classes:
+
+```csharp
+using Shibari;
+
+public class UiNode : Node
+{
+    //SerializeValue attribute marks property to be serialized to json.
+    //ShowInEditor attribute marks property to be visible in bindable views.
+    [SerializeValue, ShowInEditor]
+    //It's good practice to store resource paths in separate json file.
+    public AssignableValue<string> DonutSpritePath { get; } = new AssignableValue<string>();
+
+    [SerializeValue, ShowInEditor]
+    //The same applies to user-friendly text labels. 
+    //If you need to support various languages, you can make separate localization node and feed different json files to it, depending on user's language.
+    public AssignableValue<string> ScoreFormat { get; } = new AssignableValue<string>();
+    
+    [SerializeValue, ShowInEditor]
+    public AssignableValue<string[]> DonutTypes { get; } = new AssignableValue<string[]>();
+}
+```
+
+```csharp
+using Shibari;
+using UnityEngine;
+
+public class PlayerNode : Node
+{
+    [SerializeValue]
+    public AssignableValue<int> Score { get; } = new AssignableValue<int>();
+
+    //Save player node to PlayerPrefs.
+    public void Save()
+    {
+        PlayerPrefs.SetString("donut_score", Serialize());
+        //PlayerPrefs.Save() is pretty heavy. Usually, you don't want to call it every time something is changed.
+        PlayerPrefs.Save();
+    }
+
+    //Load player node from PlayerPrefs.
+    public void Load()
+    {
+        if (PlayerPrefs.HasKey("donut_score"))
+            Deserialize(PlayerPrefs.GetString("donut_score"));
+    }
+
+    public override void Initialize()
+    {
+        //Save player node each time score has changed.
+        Score.OnValueChanged += Save;
+        base.Initialize();
+    }
+}
+```
+
+Now modify RootNode class:
+
+```csharp
+using Shibari;
+using UnityEngine;
+
+public class RootNode : Node
+{
+    //Marks node's contents visible in the editor. By default, node is hidden even if it has properties marked with ShowInEditor attribute. It's made this way for consistency reasons.
+    [ShowInEditor]
+    public UiNode UiNode { get; private set; }
+
+    //We don't need player node to be visible in editor. 
+    public PlayerNode PlayerNode { get; private set; }
+
+    //Simple property to encapsulate explicit convertion from Node to RootNode.
+    public static RootNode Instance { get { return (RootNode)Model.RootNode; } }
+
+    public override void Initialize()
+    {
+        //We can't use auto-implemented properties in our RootData or instantiate nodes in RootNode constructor. 
+        //If we do so, instance of RootNode would not be yet assigned to a Model.RootNode at the moment of initialization of our UiData.
+        //Refer to "Grokking your model" chapter for further read.
+        PlayerNode = new PlayerNode();
+        UiNode = new UiNode();
+
+        base.Initialize();
+
+        //Model is ready to use.
+        
+        //Load UI node values from json file.
+        UiNode.Deserialize(Resources.Load<TextAsset>("UiData").text);
+        
+        PlayerNode.Load();
+    }
+}
+```
+
+### 3b.2. Make a custom BindableView
+
+We'll make single view which displays whole content of our game. It binds to model and updates it's child UnityEngine.UI views. Create new file and name it ``MegaView.cs``:
+
+```csharp
+using Shibari;
+using Shibari.UI;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class MegaView : BindableView
+{
+    //Cached child components.
+    private Text scoreLabel;
+    private Button donutButton;
+    private Image donutImage;
+    private Dropdown donutPicker;
+
+    //Tiny workaround to not complicate example too much.
+    private int oldScore = -1;
+
+    //Restraints on values the view can bind to.
+    private static BindableValueRestraint[] bindableValueRestraints = new BindableValueRestraint[]
+    {
+        //Value stored in BindableValue should inherit from specified type.
+        //Second parameter specifies if a property should be assignable.
+        //Third parameter is human-friendly label shown in editor.
+        new BindableValueRestraint(typeof(int), true, "Score"),
+        new BindableValueRestraint(typeof(string), false, "Score format"),
+        new BindableValueRestraint(typeof(string[]), false, "Donut types"),
+        new BindableValueRestraint(typeof(string), false, "Donut sprite path"),
+    };
+
+    public override BindableValueRestraint[] BindableValueRestraints { get { return bindableValueRestraints; } }
+
+    protected override void Awake()
+    {
+        //Caching references to childs' components.
+        scoreLabel = transform.Find("scoreLabel").GetComponent<Text>();
+        donutButton = transform.Find("donutButton").GetComponent<Button>();
+        donutImage = transform.Find("donutButton").GetComponent<Image>();
+        donutPicker = transform.Find("donutPicker").GetComponent<Dropdown>();
+
+        //BindableView initialization happens here.
+        base.Awake();
+
+        //Handlers for interactable UnityEngine.UI views.
+        donutPicker.onValueChanged.AddListener(DonutPicked);
+        donutButton.onClick.AddListener(DonutClicked);
+    }
+
+    //Increase score by one when button is clicked.
+    private void DonutClicked()
+    {
+        int score = (int)BindedValues[0].GetValue();
+        (BindedValues[0] as AssignableValueInfo).SetValue(score + 1);
+    }
+
+    //Set donut image.
+    private void DonutPicked(int value)
+    {
+        string donutSpritePath = (string)BindedValues[3].GetValue();
+        donutImage.sprite = Resources.Load<Sprite>(string.Format(donutSpritePath, value));
+    }
+
+    //Is called when one of binded values' content changes.
+    protected override void OnValueChanged()
+    {
+        int score = (int)BindedValues[0].GetValue();
+        string[] donutTypes = (string[])BindedValues[2].GetValue();
+
+        donutPicker.options = donutTypes.Select(s => new Dropdown.OptionData(s)).ToList();
+
+        //update score label
+        if (score != oldScore)
+        {
+            oldScore = score;
+            scoreLabel.text = string.Format((string)BindedValues[1].GetValue(), score);
+            //If score hits another ten, change donut to random one.
+            if (score % 10 == 0)
+                donutPicker.value = Random.Range(0, donutTypes.Length);
+        }
+    }
+}
+```
+
+### 3b.3. Prepare a scene
+
+1. Add ``UI/Canvas`` to your scene.
+2. Create empty ``GameObject`` in it and add ``MegaView`` component to it.
+3. Set binded values:
+   1. ``PlayerNode/Score``
+   2. ``UiNode/ScoreFormat``
+   3. ``UiNode/DonutTypes``
+   4. ``UiNode/DonutSpritePaths`` 
+4. Add following objects as childs to your MegaView and name them:
+   1. ``UI/Text`` as "labelScore".
+   2. ``UI/Button`` as "donutButton".
+   3. ``UI/Dropdown`` as "donutPicker".
+
+### 3b.4. Enjoy
+
+For best results, do not skip this step.
+
+## 3c. Not using BindableView at all
+
+### 3c.0. Don't start from a scratch
+
+If you've done chapter 3b first, don't touch anything! Otherwise, 
+
+### 3c.1. Prepare your model
+
+Same as in 3b.1.
+
+### 3b.2. Prepare your view
+
+If you have MegaView already, edit it. Otherwise, create MegaView.cs file:
+
+```csharp
+using Shibari;
+using Shibari.UI;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class MegaView : MonoBehaviour
+{
+    //Cached child components.
+    private Text scoreLabel;
+    private Button donutButton;
+    private Image donutImage;
+    private Dropdown donutPicker;
+    
+    protected virtual void Awake()
+    {
+        //Caching references to childs' components.
+        scoreLabel = transform.Find("scoreLabel").GetComponent<Text>();
+        donutButton = transform.Find("donutButton").GetComponent<Button>();
+        donutImage = transform.Find("donutButton").GetComponent<Image>();
+        donutPicker = transform.Find("donutPicker").GetComponent<Dropdown>();
+        
+        //Handlers for interactable UnityEngine.UI views.
+        donutPicker.onValueChanged.AddListener(DonutPicked);
+        donutButton.onClick.AddListener(DonutClicked);
+
+        //Handlers for bindable value events.
+        RootNode.Instance.PlayerNode.Score.OnValueChanged += OnScoreChanged;
+        RootNode.Instance.UiNode.DonutTypes.OnValueChanged += OnDonutTypesChanged;
+
+        //Update view with values that were assigned prior to view initialization.
+        OnScoreChanged();
+        OnDonutTypesChanged();
+        DonutPicked(0);
+    }
+
+    //Increase score by one when button is clicked.
+    private void DonutClicked()
+    {
+        int score = RootNode.Instance.PlayerNode.Score;
+        RootNode.Instance.PlayerNode.Score.Set(score + 1);
+    }
+
+    //Set donut image.
+    private void DonutPicked(int value)
+    {
+        string donutSpritePath = RootNode.Instance.UiNode.DonutSpritePath;
+        donutImage.sprite = Resources.Load<Sprite>(string.Format(donutSpritePath, value));
+    }
+
+    protected virtual void OnScoreChanged()
+    {
+        scoreLabel.text = string.Format(RootNode.Instance.UiNode.ScoreFormat, RootNode.Instance.PlayerNode.Score);
+        //If score hits another ten, change donut to random one.
+        if (RootNode.Instance.PlayerNode.Score % 10 == 0)
+            donutPicker.value = Random.Range(0, RootNode.Instance.UiNode.DonutTypes.Get().Length);
+    }
+    
+    protected virtual void OnDonutTypesChanged()
+    {
+
+        string[] donutTypes = RootNode.Instance.UiNode.DonutTypes;
+        donutPicker.options = donutTypes.Select(s => new Dropdown.OptionData(s)).ToList();
+    }
+}
+```
+
+### 3c.3. Prepare a scene
+
+If you've finished chapter 3b first, your scene is fine. Unity Editor would require a little help updating MegaView component, though.
+
+Otherwise, follow these steps:
+
+1. Add ``UI/Canvas`` to your scene.
+2. Create empty ``GameObject`` in it and add ``MegaView`` component to it.
+3. Add following objects as childs to your MegaView and name them:
+   1. ``UI/Text`` as "labelScore".
+   2. ``UI/Button`` as "donutButton".
+   3. ``UI/Dropdown`` as "donutPicker".
+
+### 3c.4. Enjoy
+
+Go pick a beer from a fridge if you've got one. You've deserved it, and it will help you digest chapter 4.
 
 ## 4. Grokking your model
 

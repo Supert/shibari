@@ -14,7 +14,7 @@ You know what's better than a donut clicker game? ~~An actual donut~~ Three donu
 
 ## 2. Initial Setup
 
-1.  Clone this repository into the Assets/Shibari subfolder of your project ~~or import Asset Store package (not yet published)~~.
+1.  Clone this repository into the ``Assets/Shibari`` subfolder of your project [or import Asset Store package](https://assetstore.unity.com/packages/templates/systems/shibari-114989).
 2.  Set ``Player Settings/Api Compatibility Level`` to ``Experimental (.NET 4.6 Equivalent)``.
 3.  Add required dependencies to your project:
     * [JsonNET](https://www.newtonsoft.com/json), or [package from Wanzyee studio](https://assetstore.unity.com/packages/tools/input-management/json-net-converters-simple-compatible-solution-58621), or [package from ParentElement, LLC](https://assetstore.unity.com/packages/tools/input-management/json-net-for-unity-11347)
@@ -188,7 +188,7 @@ Create three programmer art donut sprites in ``Assets/Resources/Donut`` folder. 
 
 ### 3a.3. Prepare scene
 
-* Create new Unity scene.
+* Create a new Unity scene.
 * Add Canvas to it (right click inside Hierarchy view, then pick UI/Canvas option).
 * Add UI/Text to your canvas, then add TextView component to it. Pick ``UiNode/ScoreLabel`` in it's inspector.
 * Make an UI/Button and add ButtonView component. Pick ``UiNode/OnDonutClicked()``. Then add ImageView and pick ``UiNode/CurrentDonutSprite``.
@@ -202,11 +202,11 @@ Our little game is ready to be played.
 
 ### 3b.0. Start from a scratch
 
-Revert changes to your project you've made in chapter 3a.
+Revert changes to the project you made in chapter 3a.
 
 ### 3b.1. Prepare your model
 
-Let's break our model in two nodes: player node stores player score, and UI node stores resources and localization info.
+Let's break our model into two nodes: player node stores player score, and UI node stores resources and localization info.
 
 Make two new classes:
 
@@ -304,7 +304,7 @@ public class RootNode : Node
 
 ### 3b.2. Make a custom BindableView
 
-We'll make single view which displays whole content of our game. It binds to model and updates it's child UnityEngine.UI views. Create new file and name it ``MegaView.cs``:
+We'll make single view which displays all the content of our game. It binds to a model and updates it's child UnityEngine.UI views. Create a new file and name it ``MegaView.cs``:
 
 ```csharp
 using Shibari;
@@ -398,7 +398,7 @@ public class MegaView : BindableView
    2. ``UiNode/ScoreFormat``
    3. ``UiNode/DonutTypes``
    4. ``UiNode/DonutSpritePaths`` 
-4. Add following objects as childs to your MegaView and name them:
+4. Add the following objects as childs to your MegaView and name them:
    1. ``UI/Text`` as "labelScore".
    2. ``UI/Button`` as "donutButton".
    3. ``UI/Dropdown`` as "donutPicker".
@@ -504,7 +504,7 @@ Otherwise, follow these steps:
 
 ### 3c.4. Enjoy
 
-Go pick a beer from a fridge if you've got one. You've deserved it, and it will help you digest chapter 4.
+Grab a beer from the fridge if you've got one. You deserve it, and it will help what's coming in chapter 4 go down.
 
 ## 4. Grokking your model
 

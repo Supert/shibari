@@ -1,6 +1,5 @@
 ﻿using Shibari.UI;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 
 namespace Shibari.Editor
@@ -16,7 +15,7 @@ namespace Shibari.Editor
             SerializedProperty tps = serializedObject.FindProperty("serializedInfos");
             EditorGUI.BeginChangeCheck();
             for (int i = 0; i < tps.arraySize; i++)
-                EditorGUILayout.PropertyField(tps.GetArrayElementAtIndex(i), true);
+                EditorGUILayout.PropertyField(tps.GetArrayElementAtIndex(i), new GUIContent(actualObject.BindableValueRestraints[i].Label), true);
             if (EditorGUI.EndChangeCheck())
                 serializedObject.ApplyModifiedProperties();
         }

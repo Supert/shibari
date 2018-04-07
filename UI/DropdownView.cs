@@ -11,8 +11,8 @@ namespace Shibari.UI
 
         private BindableValueRestraint[] bindableValueRestraints = new BindableValueRestraint[2]
         {
-            new BindableValueRestraint(typeof(int), true),
-            new BindableValueRestraint(typeof(string[]), false),
+            new BindableValueRestraint(typeof(int), true, "Value"),
+            new BindableValueRestraint(typeof(string[]), false, "Options"),
         };
 
         public override BindableValueRestraint[] BindableValueRestraints

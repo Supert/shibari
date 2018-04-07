@@ -16,11 +16,10 @@ namespace Shibari.Editor
         {
             var bindableIds = PropertyDrawerUtility.GetActualObjectForSerializedProperty<BindableValueSerializedInfo>(fieldInfo, property);
             var path = property.FindPropertyRelative("pathInModel"); 
-
             path.stringValue = MultiLevelDropDownUtility.DrawControl(
                 position, 
                 label, 
-                property.FindPropertyRelative("pathInModel").stringValue, 
+                path.stringValue, 
                 Node.GetBindableValuesPaths(Shibari.Model.RootNodeType, "", false, true, bindableIds.allowedValueType).ToList()
             );
 

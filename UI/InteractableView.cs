@@ -19,7 +19,7 @@ namespace Shibari.UI
 
         protected override void OnValueChanged()
         {
-            selectable.interactable = (bool) BindedValues[0].GetValue();
+            selectable.interactable = (bool) BoundValues[0].GetValue();
         }
     }
 }

@@ -357,22 +357,22 @@ public class MegaView : BindableView
     //Increase score by one when button is clicked.
     private void DonutClicked()
     {
-        int score = (int)BindedValues[0].GetValue();
-        (BindedValues[0] as AssignableValueInfo).SetValue(score + 1);
+        int score = (int)BoundValues[0].GetValue();
+        (BoundValues[0] as AssignableValueInfo).SetValue(score + 1);
     }
 
     //Set donut image.
     private void DonutPicked(int value)
     {
-        string donutSpritePath = (string)BindedValues[3].GetValue();
+        string donutSpritePath = (string)BoundValues[3].GetValue();
         donutImage.sprite = Resources.Load<Sprite>(string.Format(donutSpritePath, value));
     }
 
-    //Is called when one of binded values' content changes.
+    //Is called when one of bound values' content changes.
     protected override void OnValueChanged()
     {
-        int score = (int)BindedValues[0].GetValue();
-        string[] donutTypes = (string[])BindedValues[2].GetValue();
+        int score = (int)BoundValues[0].GetValue();
+        string[] donutTypes = (string[])BoundValues[2].GetValue();
 
         donutPicker.options = donutTypes.Select(s => new Dropdown.OptionData(s)).ToList();
 
@@ -380,7 +380,7 @@ public class MegaView : BindableView
         if (score != oldScore)
         {
             oldScore = score;
-            scoreLabel.text = string.Format((string)BindedValues[1].GetValue(), score);
+            scoreLabel.text = string.Format((string)BoundValues[1].GetValue(), score);
             //If score hits another ten, change donut to random one.
             if (score % 10 == 0)
                 donutPicker.value = Random.Range(0, donutTypes.Length);
@@ -393,7 +393,7 @@ public class MegaView : BindableView
 
 1. Add ``UI/Canvas`` to your scene.
 2. Create empty ``GameObject`` in it and add ``MegaView`` component to it.
-3. Set binded values:
+3. Set bound values:
    1. ``PlayerNode/Score``
    2. ``UiNode/ScoreFormat``
    3. ``UiNode/DonutTypes``

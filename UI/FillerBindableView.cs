@@ -24,7 +24,7 @@ namespace Shibari.UI
         }
         protected override void OnValueChanged()
         {
-            image.fillAmount = Mathf.Clamp01((float)BindedValues[0].GetValue());
+            image.fillAmount = Mathf.Clamp01((float)BoundValues[0].GetValue());
         }
     }
 }

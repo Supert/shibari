@@ -26,9 +26,9 @@ namespace Shibari.UI
             input = GetComponent<InputField>();
             input.onValueChanged.AddListener((s) =>
             {
-                if (s != (string)BindedValues[0].GetValue())
+                if (s != (string)BoundValues[0].GetValue())
                 {
-                    (BindedValues[0] as AssignableValueInfo).SetValue(s);
+                    (BoundValues[0] as AssignableValueInfo).SetValue(s);
                 }
             });
             base.Awake();
@@ -36,9 +36,9 @@ namespace Shibari.UI
 
         protected override void OnValueChanged()
         {
-            string value = (string)BindedValues[0].GetValue();
+            string value = (string)BoundValues[0].GetValue();
             if (value != input.text)
-                input.text = (string)BindedValues[0].GetValue();
+                input.text = (string)BoundValues[0].GetValue();
         }
     }
 }

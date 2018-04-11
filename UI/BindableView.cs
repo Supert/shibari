@@ -12,8 +12,11 @@ namespace Shibari.UI
         private BindableValueSerializedInfo[] serializedInfos = new BindableValueSerializedInfo[0];
 
         public BindableValueSerializedInfo[] BindableValuesSerializedInfos { get { return serializedInfos; } set { serializedInfos = value; } }
+        
+        protected BindableValueInfo[] BoundValues { get; private set; }
 
-        protected BindableValueInfo[] BindedValues { get; private set; }
+        [Obsolete("Use BoundValue instead.")]
+        protected BindableValueInfo[] BindedValues { get { return BoundValues; } }
 
         public void Initialize()
         {
@@ -36,12 +39,12 @@ namespace Shibari.UI
 
             onValueChangedDelegate = Delegate.CreateDelegate(typeof(Action), this, "OnValueChanged");
 
-            BindedValues = new BindableValueInfo[serializedInfos.Length];
+            BoundValues = new BindableValueInfo[serializedInfos.Length];
 
             for (int i = 0; i < serializedInfos.Length; i++)
             {
-                BindedValues[i] = GetField(serializedInfos[i]);
-                BindedValues[i].EventInfo.AddEventHandler(BindedValues[i].BindableValue, onValueChangedDelegate);
+                BoundValues[i] = GetField(serializedInfos[i]);
+                BoundValues[i].EventInfo.AddEventHandler(BoundValues[i].BindableValue, onValueChangedDelegate);
             }
         }
 
@@ -61,9 +64,9 @@ namespace Shibari.UI
 
         protected void OnDestroy()
         {
-            if (BindedValues != null)
+            if (BoundValues != null)
             {
-                foreach (var field in BindedValues)
+                foreach (var field in BoundValues)
                 {
                     field.EventInfo.RemoveEventHandler(field.BindableValue, onValueChangedDelegate);
                 }

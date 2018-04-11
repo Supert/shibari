@@ -23,7 +23,7 @@ namespace Shibari.UI
 
         protected override void OnValueChanged()
         {
-            text.text = BindedValues[0].GetValue()?.ToString() ?? "{null}";
+            text.text = BoundValues[0].GetValue()?.ToString() ?? "{null}";
         }
     }
 }

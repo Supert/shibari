@@ -20,17 +20,17 @@ namespace Shibari.UI
             toggle = GetComponent<Toggle>();
             toggle.onValueChanged.AddListener((b) =>
             {
-                if (b != (bool)BindedValues[0].GetValue())
-                    (BindedValues[0] as AssignableValueInfo).SetValue(b);
+                if (b != (bool)BoundValues[0].GetValue())
+                    (BoundValues[0] as AssignableValueInfo).SetValue(b);
             });
             base.Awake();
         }
 
         protected override void OnValueChanged()
         {
-            bool value = (bool)BindedValues[0].GetValue();
+            bool value = (bool)BoundValues[0].GetValue();
             if (value != toggle.isOn)
-                toggle.isOn = (bool)BindedValues[0].GetValue();
+                toggle.isOn = (bool)BoundValues[0].GetValue();
         }
     }
 }

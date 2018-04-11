@@ -7,7 +7,7 @@
 
         protected override void OnValueChanged()
         {
-            gameObject.SetActive((bool)BindedValues[0].GetValue());
+            gameObject.SetActive((bool)BoundValues[0].GetValue());
         }
     }
 }

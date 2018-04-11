@@ -25,7 +25,7 @@ namespace VillageKeeper.UI
 
         protected override void OnValueChanged()
         {
-            var value = BindedValues[0].GetValue();
+            var value = BoundValues[0].GetValue();
             image.sprite = (Sprite)value;
         }
     }

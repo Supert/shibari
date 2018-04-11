@@ -22,7 +22,7 @@ namespace Shibari.UI
 
         protected override void OnValueChanged()
         {
-            var sprites = BindedValues[0].GetValue() as SelectableSprites;
+            var sprites = BoundValues[0].GetValue() as SelectableSprites;
             image.sprite = sprites.Normal;
             var state = selectable.spriteState;
             state.disabledSprite = sprites.Disabled;

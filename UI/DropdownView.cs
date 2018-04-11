@@ -30,18 +30,18 @@ namespace Shibari.UI
             dropdown = GetComponent<Dropdown>();
             dropdown.onValueChanged.AddListener((i) =>
             {
-                if (i != (int)BindedValues[0].GetValue())
-                    (BindedValues[0] as AssignableValueInfo).SetValue(i);
+                if (i != (int)BoundValues[0].GetValue())
+                    (BoundValues[0] as AssignableValueInfo).SetValue(i);
             });
             
-            dropdown.options = (BindedValues[1].GetValue() as string[]).Select(s => new Dropdown.OptionData(s)).ToList();
+            dropdown.options = (BoundValues[1].GetValue() as string[]).Select(s => new Dropdown.OptionData(s)).ToList();
         }
 
         protected override void OnValueChanged()
         {
-            int value = (int)BindedValues[0].GetValue();
+            int value = (int)BoundValues[0].GetValue();
             if (value != dropdown.value)
-                dropdown.value = (int)BindedValues[0].GetValue();
+                dropdown.value = (int)BoundValues[0].GetValue();
         }
     }
 }

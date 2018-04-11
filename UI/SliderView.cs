@@ -27,17 +27,17 @@ namespace Shibari.UI
             slider = GetComponent<Slider>();
             slider.onValueChanged.AddListener((f) =>
             {
-                if (f != (float)BindedValues[0].GetValue())
-                    (BindedValues[0] as AssignableValueInfo).SetValue(f);
+                if (f != (float)BoundValues[0].GetValue())
+                    (BoundValues[0] as AssignableValueInfo).SetValue(f);
             });
             base.Awake();
         }
 
         protected override void OnValueChanged()
         {
-            float value = (float)BindedValues[0].GetValue();
+            float value = (float)BoundValues[0].GetValue();
             if (value != slider.value)
-                slider.value = (float)BindedValues[0].GetValue();
+                slider.value = (float)BoundValues[0].GetValue();
         }
     }
 }

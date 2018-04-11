@@ -35,11 +35,11 @@ You can find a showcase project for my framework [here](https://github.com/Super
 
 ### BindableHandlerView : MonoBehaviour
 
-Base abstract class for View-to-Model connection. It binds to a method specified in Unity Editor and calls it when specified conditions are met (for example, ButtonView calls it's method when button is clicked).
+Base abstract class for View-to-Model connection. It binds to a method specified in Unity Editor and calls it when specified conditions are met (for example, ButtonView calls its method when button is clicked).
 
 #### ButtonView
 
-BindableHandlerView which calls it's method when button is clicked.
+BindableHandlerView which calls its method when button is clicked.
 
 ### BindableView : MonoBehaviour
 
@@ -51,15 +51,15 @@ Populates UnityEngine.UI.Dropdown view with contents of the second BindedValue a
 
 #### EnabledView
 
-Sets GameObject active or inactive depending on it's boolean BindedValue.
+Sets GameObject active or inactive depending on its boolean BindedValue.
 
 #### FillerBindableView
 
-Sets Image.fillAmount to it's float BindedValue.
+Sets Image.fillAmount to its float BindedValue.
 
 #### ImageBindableView
 
-Sets Image.Sprite to it's Sprite BindedValue.
+Sets Image.Sprite to its Sprite BindedValue.
 
 #### InputView
 

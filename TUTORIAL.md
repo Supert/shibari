@@ -31,7 +31,7 @@ public class RootNode : Node
 
 ## 3a. Using default BindableViews
 
-### 3a.1. Preparing the model
+### 3a.1. Prepare a model
 
 Let's split our model in two different nodes: player node stores a score, and UI node has everything that views interact with.
 
@@ -184,9 +184,9 @@ Create a new text file in ``Assets/Resources`` folder and name it "UiNode.json":
 }
 ```
 
-Create three programmer art donut sprites in ``Assets/Resources/Donut`` folder. Or skip this step, if you are fine with white square donuts.
+Create three programmer art donut sprites in ``Assets/Resources/Donut`` folder and name them "0", "1", and "2". Or skip this step, if you are fine with white square donuts.
 
-### 3a.3. Prepare scene
+### 3a.3. Prepare a scene
 
 * Create a new Unity scene.
 * Add Canvas to it (right click inside Hierarchy view, then pick UI/Canvas option).
@@ -302,7 +302,23 @@ public class RootNode : Node
 }
 ```
 
-### 3b.2. Make a custom BindableView
+### 3b.2. Prepare resources
+
+Same as in 3a.2:
+
+Create a new text file in ``Assets/Resources`` folder and name it "UiNode.json":
+
+```json
+{
+  "DonutSpritePath": "Donuts/{0}",
+  "ScoreFormat": "Score: {0}",
+  "DonutTypes": ["No topping", "Chocolate topping", "Stuffed donut"]
+}
+```
+
+Create three programmer art donut sprites in ``Assets/Resources/Donut`` folder and name them "0", "1", and "2". Or skip this step, if you are fine with white square donuts.
+
+### 3b.3. Make a custom BindableView
 
 We'll make single view which displays all the content of our game. It binds to a model and updates it's child UnityEngine.UI views. Create a new file and name it ``MegaView.cs``:
 
@@ -389,7 +405,7 @@ public class MegaView : BindableView
 }
 ```
 
-### 3b.3. Prepare a scene
+### 3b.4. Prepare a scene
 
 1. Add ``UI/Canvas`` to your scene.
 2. Create empty ``GameObject`` in it and add ``MegaView`` component to it.
@@ -403,7 +419,7 @@ public class MegaView : BindableView
    2. ``UI/Button`` as "donutButton".
    3. ``UI/Dropdown`` as "donutPicker".
 
-### 3b.4. Enjoy
+### 3b.5. Enjoy
 
 For best results, do not skip this step.
 
@@ -411,13 +427,17 @@ For best results, do not skip this step.
 
 ### 3c.0. Don't start from a scratch
 
-If you've done chapter 3b first, don't touch anything! Otherwise, 
+If you've done chapter 3b first, don't revert anything! 
 
 ### 3c.1. Prepare your model
 
 Same as in 3b.1.
 
-### 3b.2. Prepare your view
+### 3c.2 ### 3b.2. Prepare resources
+
+Same as in 3b.2.
+
+### 3b.3. Prepare your view
 
 If you have MegaView already, edit it. Otherwise, create MegaView.cs file:
 
@@ -489,7 +509,7 @@ public class MegaView : MonoBehaviour
 }
 ```
 
-### 3c.3. Prepare a scene
+### 3c.4. Prepare a scene
 
 If you've finished chapter 3b first, your scene is fine. Unity Editor would require a little help updating MegaView component, though.
 
@@ -502,7 +522,7 @@ Otherwise, follow these steps:
    2. ``UI/Button`` as "donutButton".
    3. ``UI/Dropdown`` as "donutPicker".
 
-### 3c.4. Enjoy
+### 3c.5. Enjoy
 
 Grab a beer from the fridge if you've got one. You deserve it, and it will help what's coming in chapter 4 go down.
 

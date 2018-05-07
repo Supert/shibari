@@ -35,6 +35,7 @@ namespace Shibari
             }
 
             PrefabUtility.CreatePrefab(SETTINGS_PATH, settingsPrefab);
+            UnityEngine.Object.DestroyImmediate(settingsPrefab);
         }
 
         public static void DeserializeRootNodeType()

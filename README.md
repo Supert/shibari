@@ -35,11 +35,11 @@ You can find a showcase project for my framework [here](https://github.com/Super
 
 ### BindableHandlerView : MonoBehaviour
 
-Base abstract class for View-to-Model connection. It binds to a method specified in Unity Editor and calls it when specified conditions are met (for example, ButtonView calls its method when button is clicked).
+Base abstract class for View-to-Model connection. It binds to a method specified in Unity Editor and calls it when specified conditions are met (for example, ButtonView calls it's method when button is clicked).
 
 #### ButtonView
 
-BindableHandlerView which calls its method when button is clicked.
+BindableHandlerView which calls it's method when button is clicked.
 
 ### BindableView : MonoBehaviour
 
@@ -47,40 +47,40 @@ Base abstract class for Model-to-View and both-ways connection.
 
 #### DropdownView
 
-Populates UnityEngine.UI.Dropdown view with contents of the second BindedValue and binds index of selected item to the first one.
+Populates UnityEngine.UI.Dropdown view with contents of the second BoundValue and binds index of selected item to the first one.
 
 #### EnabledView
 
-Sets GameObject active or inactive depending on its boolean BindedValue.
+Sets GameObject active or inactive depending on it's boolean BoundValue.
 
 #### FillerBindableView
 
-Sets Image.fillAmount to its float BindedValue.
+Sets Image.fillAmount to it's float BoundValue.
 
 #### ImageBindableView
 
-Sets Image.Sprite to its Sprite BindedValue.
+Sets Image.Sprite to it's Sprite BoundValue.
 
 #### InputView
 
-Provides two-way connection between InputField and string BindedValue.
+Provides two-way connection between InputField and string BoundValue.
 
 #### InteractableView
 
-Sets Selectable.interactable to boolean BindedValue.
+Sets Selectable.interactable to boolean BoundValue.
 
 #### SelectableSpritesView
 
-Sets Selectable sprites to SelectableSprites BindedValue.
+Sets Selectable sprites to SelectableSprites BoundValue.
 
 #### SliderView
 
-Provides two-way connection between Slider and float BindedValue.
+Provides two-way connection between Slider and float BoundValue.
 
 #### TextBindableView
 
-Sets Text.text to string BindedValue.
+Sets Text.text to string BoundValue.
 
 #### ToggleView
 
-Provides two-way connection between Toggle.isOn and boolean BindedValue.
+Provides two-way connection between Toggle.isOn and boolean BoundValue.

@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System;
 using UnityEngine;
-using UnityEditor;
 
 namespace Shibari
 {
-    [InitializeOnLoad]
     public static class Model
     {
         public const string SETTINGS_PATH = "Assets/Shibari/Resources/ShibariSettings.prefab";
@@ -21,29 +19,10 @@ namespace Shibari
             DeserializeRootNodeType();
         }
 
-        public static void InitializeSettingsPrefab()
-        {
-            var settingsPrefab = new GameObject();
-            settingsPrefab.AddComponent<ShibariSettings>();
-            string[] splittedPath = SETTINGS_PATH.Split('/');
-            string builtFolders = splittedPath[0];
-            for (int i = 1; i < splittedPath.Length - 1; i++)
-            {
-                if (!AssetDatabase.GetSubFolders(builtFolders).Contains(builtFolders + "/" + splittedPath[i]))
-                    AssetDatabase.CreateFolder(builtFolders, splittedPath[i]);
-                builtFolders += "/" + splittedPath[i];
-            }
-
-            PrefabUtility.CreatePrefab(SETTINGS_PATH, settingsPrefab);
-            UnityEngine.Object.DestroyImmediate(settingsPrefab);
-        }
-
         public static void DeserializeRootNodeType()
         {
             ShibariSettings settings = Resources.Load<ShibariSettings>("ShibariSettings");
-            if (settings == null)
-                InitializeSettingsPrefab();
-            settings = Resources.Load<ShibariSettings>("ShibariSettings");
+
             RootNodeType = GetNodeTypes().FirstOrDefault(t => t.FullName == settings.RootNodeType.value);
             if (RootNodeType == null)
             {

@@ -3,7 +3,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
-using System;
 
 namespace Shibari.Editor
 {
@@ -13,6 +12,23 @@ namespace Shibari.Editor
         Model()
         {
             PrefabUtility.prefabInstanceUpdated += OnPrefabInstanceUpdate;
+        }
+
+        public static void InitializeSettingsPrefab()
+        {
+            var settingsPrefab = new GameObject();
+            settingsPrefab.AddComponent<ShibariSettings>();
+            string[] splittedPath = Shibari.Model.SETTINGS_PATH.Split('/');
+            string builtFolders = splittedPath[0];
+            for (int i = 1; i < splittedPath.Length - 1; i++)
+            {
+                if (!AssetDatabase.GetSubFolders(builtFolders).Contains(builtFolders + "/" + splittedPath[i]))
+                    AssetDatabase.CreateFolder(builtFolders, splittedPath[i]);
+                builtFolders += "/" + splittedPath[i];
+            }
+
+            PrefabUtility.CreatePrefab(Shibari.Model.SETTINGS_PATH, settingsPrefab);
+            UnityEngine.Object.DestroyImmediate(settingsPrefab);
         }
 
         static void OnPrefabInstanceUpdate(GameObject instance)
